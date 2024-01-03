@@ -7,3 +7,8 @@ The goal of this program is to:
     allow users to change or modify the desitnation page 
 
 More info coming soon!
+
+Branch Information
+    Main - This is the active, public facing branch
+    QA - This branch is used after development, but before Main
+    Development - This branch is where new work shall be done

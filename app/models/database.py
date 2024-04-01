@@ -23,17 +23,35 @@ class Link(BaseModel):
 
 def create_link(link: Link) -> None:
     pass
-    #this function will create an entry in the database in the correct format
+    """
+    this function will take data from api_handlers and create an entry in the database
+    return a bollean to indicate success or fail
+    """
 
 
 def get_link_by_short_url(short_url: str) -> Optional[dict]:
     pass
-    #this function will grab the original link, when a short_url is passed in
+    """
+    this function will take a shortlink from api_handlers, 
+    and return the original URL back to api_handlers
+    """
 
 def get_link_by_id(link_id: str) -> Optional[dict]:
     pass
-    #this function will gran the original link when the unique id is passed in
+    """
+    this function will take a link id from api_handlers, and return the original url to api_handlers
+    """
 
 def delete_link(link_id: str) -> None:
     pass
-    #this function will delete the shortlink from the DB
+    """
+    this function will take a linkID from api_handlers and delete the shortlink from the DB, 
+    return a boolean to API handlers to indicate success or fail
+    """
+
+def update_link(link_id: str, data: dict) -> None:
+    pass
+    """
+    This function will take information from api_handlers and update the record on the DB
+    return a boolean to api handlers
+    """

@@ -1,0 +1,23 @@
+Index: app/main.py
+===================================================================
+diff --git a/app/main.py b/app/main.py
+--- a/app/main.py	
++++ b/app/main.py	
+@@ -1,0 +1,16 @@
++from fastapi import FastAPI
++
++# Create an instance of the FastAPI class
++app = FastAPI()
++
++# Define a simple endpoint
++@app.get("/")
++def read_root():
++    return {"message": "Welcome to the URL Shortener API"}
++
++# Define additional endpoints as needed
++
++# Entry point of the application
++if __name__ == "__main__":
++    import uvicorn
++    uvicorn.run(app, host="127.0.0.1", port=8000)
+\ No newline at end of file

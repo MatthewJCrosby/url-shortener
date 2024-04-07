@@ -1,1 +1,4 @@
+*.xml
+*.patch
+.idea/
 /venv

@@ -1,25 +1,59 @@
 from typing import Optional
 from boto3.session import Session
-from app.service.url_shortener import Link
+from app.models.link import Link
 import os
 
 # this file will contain connection to the database, and database logic
 
 
 class LinkDatabase:
-    def __init__(self, endpoint_url:str, table_name:str):
+    def __init__(self, table_name:str):
+
         # connection parameters
-        self.session = Session()
-        self.dynamodb = self.session.resource("dynamodb", endpoint_url=endpoint_url)  # Use the configurable endpoint URL
+        self.session = Session(
+            aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+            region_name='us-west-2'
+        )
+        self.dynamodb = self.session.resource("dynamodb")
         self.table = self.dynamodb.Table(table_name)
+        self.users_table = self.dynamodb.Table('UsersTable')
 
 # CREATE
-    def create_link(self, link: Link) -> Link:
-        pass
+    def create_link(self, link, user):
+        try:
+            # Convert the Link object to a dict for DB inseriton in the format shortlink : clicks : original_url
+            item = link.dict()
+
+            # place the link into the link DB
+            self.table.put_item(Item=item)
+
+            # Update the user's links set in the Users table
+            self.update_user_entry(user, link.short_url)
+            return True
+
+        # in case an error occurs
+        except Exception as e:
+            print(f"Failed to create link: {e}")
+            return False
+
+    def update_user_entry(self, username, short_url):
         """
-        this function will create an entry in the database
-        return a Link object so the input information can be returned
+        user table keeps a set of each users links for listing / editing / data / clicks retrieval
+            for now, it assumes the user exists, later on it will verify a user is in the table before link creation
         """
+
+        #db format username: set(links)
+        try:
+            self.users_table.update_item(
+                Key={'username': username},
+                UpdateExpression='ADD links :newLink',
+                ExpressionAttributeValues={':newLink': {short_url}},
+                ReturnValues="UPDATED_NEW"
+            )
+        except Exception as e:
+            print(f"Failed to update user entry: {e}")
+
 
 
     # READ

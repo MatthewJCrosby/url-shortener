@@ -12,13 +12,11 @@ and converts it into the short_link format needed for the databse
 
 
 
-#link class defines how the data should look.
-
+# open a connection to the DB
+db = LinkDatabase("URLShortenerTable")
 
 def create_shortened_url(original_url: str, short_url: Optional[str], username: str) -> str:
 
-    # open a connection to the DB
-    db = LinkDatabase("URLShortenerTable")
 
     # if no shortlink was provided, create one
     if not short_url:

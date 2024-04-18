@@ -20,7 +20,7 @@ def create_shortened_url(original_url: str, short_url: Optional[str], username: 
 
     # if no shortlink was provided, create one
     if not short_url:
-        short_url = generate_url(db)  # Generate short URL if not provided
+        short_url = generate_url()  # Generate short URL if not provided
 
     # create a Link object
     link = Link(original_url=str(original_url), short_url=short_url)
@@ -33,7 +33,7 @@ def create_shortened_url(original_url: str, short_url: Optional[str], username: 
     else:
         raise Exception("Database insertion failed")
 
-def generate_url(db) -> str:
+def generate_url() -> str:
 
     #create a 8 digit uuid as shortlink
     url = str(uuid.uuid4())[:8]

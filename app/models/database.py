@@ -73,11 +73,39 @@ class LinkDatabase:
     # READ
 
     def get_link(self, short_url: str) -> Link:
-        pass
         """
-        this function will take a shortlink as a key, and return the link object as the value
+        this function will take a shortlink as a key, and return the link
         """
+        try:
+            #look for the key
+            res = self.table.get_item(Key={'short_url': short_url})
+            if "Item" in res:
+                #Since the url exists, and this is a redirect request, increment the counter
+                self.increment_click(short_url)
 
+                #return the original url for forwarding
+                return res['Item']["original_url"]
+
+        except Exception as e:
+            raise Exception(f"Failed to retrieve link {e}")
+
+
+
+
+    def increment_click(self, short_url):
+
+        #Increment the click counter for a given short URL, the link should be verified to exist already.
+
+        try:
+            self.table.update_item(
+                Key={'short_url': short_url},
+                UpdateExpression='SET clicks = clicks + :val',
+                ExpressionAttributeValues={':val': 1},
+                ReturnValues="UPDATED_NEW"
+            )
+            return True
+        except Exception as e:
+            raise Exception(f"Failed to update link clicks {e}")
 
     # UPDATE
     def update_link(self, link: Link) -> Link:

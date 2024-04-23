@@ -50,6 +50,17 @@ def _create_random_short_url(db, length=8) -> str:
     #return as a string
     return str(url)
 
+def get_redirect_url(short_url, is_redirect: bool =False):
+    original_url = db.get_link(short_url)
+    if original_url:
+        return original_url
+    else:
+        raise ValueError(f"Error retrieving data for {short_url}: {e}")
+
+
+
+
+
 
 def update_short_url(short_url: str, new_url: str) -> bool:
     """

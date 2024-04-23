@@ -1,6 +1,9 @@
 
+import uuid
 from pydantic import BaseModel
 from typing import Optional
+from app.models.database import LinkDatabase
+from app.models.link import Link
 
 
 """
@@ -8,26 +11,45 @@ This file is a helper that recieves data from api_handlers
 and converts it into the short_link format needed for the databse
 """
 
-#link class defines how the data should look.
-class Link(BaseModel):
-    id: Optional[str]
-    original_url: str
-    short_url: str
-
-def create_shortened_url(original_url: str) -> str:
-    pass
-    """ This function will take information from api_handlers, call generate_url, create a link object  
-        send the information to database.py for insertion
-        returns the generated valid shortlink
-    """
 
 
-def generate_url() -> str:
-    pass
-    """
-    This function is a helper function of create_shortened url, and will handle the generation of a link
-    and ensuring it doesnt already exist
-    """
+
+# open a connection to the DB
+db = LinkDatabase("URLShortenerTable")
+
+def create_shortened_url(original_url: str, short_url: Optional[str], username: str) -> str:
+
+    #if a shortlink was provided, wnsure it doesnt exist already
+    if short_url and db.check_if_key_exists(short_url):
+        raise Exception("This Link already exists")
+
+    # if no shortlink was provided, create one
+    if not short_url:
+        short_url = _create_random_short_url(db)  # Generate short URL if not provided
+
+    # create a Link object
+    link = Link(original_url=str(original_url), short_url=short_url)
+
+    # create an entry in the DB
+    if db.create_link(link, username):
+        return link.short_url
+
+    # if something went wrong
+    else:
+        raise Exception("Database insertion failed")
+
+def _create_random_short_url(db, length=8) -> str:
+
+    #create a 8 digit uuid as shortlink
+    url = str(uuid.uuid4())[:length]
+
+    #if it exists, create another until it's unique in the DB
+    while db.check_if_key_exists(url):
+        url = str(uuid.uuid4())[:length]
+
+    #return as a string
+    return str(url)
+
 
 def update_short_url(short_url: str, new_url: str) -> bool:
     """

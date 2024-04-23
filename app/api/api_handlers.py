@@ -1,7 +1,9 @@
+
 from fastapi import FastAPI, HTTPException, status, Depends
 from typing import Optional
 from pydantic import BaseModel, HttpUrl
 from app.service.url_shortener import create_shortened_url
+
 
 """
 This file hanldes the various API endpoints, i.e post, get
@@ -10,6 +12,7 @@ The general flow of information is as follows:
         Customer <-> Api_handlers <-> url_shortener.py <-> database
 """
 app = FastAPI()
+
 
 #using BaseModel to ensure data is valid
 class ShortenRequest(BaseModel):
@@ -35,6 +38,7 @@ async def shorten_url(request: ShortenRequest, username: str = Depends(get_curre
         raise HTTPException(status_code=404, detail="Failed to create shortened URL")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.get("/{short_url}")

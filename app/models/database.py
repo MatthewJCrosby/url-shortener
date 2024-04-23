@@ -7,6 +7,7 @@ import os
 
 
 class LinkDatabase:
+
     def __init__(self, table_name:str):
 
         # connection parameters
@@ -67,6 +68,9 @@ class LinkDatabase:
             return 'Item' in table.get_item(Key={key_name: key_value})
         except Exception as e:
             raise Exception(f"Failed to check for key due to {e}")
+
+
+    # READ
 
     def get_link(self, short_url: str) -> Link:
         pass

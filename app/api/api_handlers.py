@@ -45,13 +45,13 @@ async def shorten_url(request: ShortenRequest, username: str = Depends(get_curre
 async def redirect(short_url: str):
     """
     this function will take the short_url and pass it on to url_shortener.py
-    if the url was found, it redirects, otherwise displays 404
+    receives a LInk object back, and redirects to the Links original url
     """
 
-    url = get_redirect_url(short_url)
-    if not url:
+    link = get_redirect_url(short_url)
+    if not link:
         raise HTTPException(status_code=404, detail="Url Not found")
-    return Response(status_code=307, headers={"Location": url})
+    return Response(status_code=307, headers={"Location": link.original_url})
 
 
 

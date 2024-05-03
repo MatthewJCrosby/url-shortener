@@ -1,8 +1,8 @@
 
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import FastAPI, HTTPException, status, Depends, Response
 from typing import Optional
 from pydantic import BaseModel, HttpUrl
-from app.service.url_shortener import create_shortened_url
+from app.service.url_shortener import create_shortened_url, get_redirect_url
 
 
 """
@@ -43,10 +43,18 @@ async def shorten_url(request: ShortenRequest, username: str = Depends(get_curre
 
 @app.get("/{short_url}")
 async def redirect(short_url: str):
-    pass
     """
     this function will take the short_url and pass it on to url_shortener.py
+    receives a LInk object back, and redirects to the Links original url
     """
+
+    link = get_redirect_url(short_url)
+    if not link:
+        raise HTTPException(status_code=404, detail="Url Not found")
+    return Response(status_code=307, headers={"Location": link.original_url})
+
+
+
 
 
 @app.get("/url-info/{short_url}")
